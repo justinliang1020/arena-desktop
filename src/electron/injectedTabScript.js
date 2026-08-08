@@ -102,141 +102,6 @@ function injectNavButtons() {
   ipcRenderer.invoke("tabGetNavigationStateSelf").then(applyNavState);
 }
 
-/**
- * @param {string} property
- * @returns {string | null}
- */
-function getOgMeta(property) {
-  return (
-    document.head
-      .querySelector(`meta[property="${property}"]`)
-      ?.getAttribute("content") ?? null
-  );
-}
-
-/**
- * Reads a <dt>label</dt><dd>value</dd> pair from are.na's channel metadata table.
- * @param {string} label
- * @returns {string | null}
- */
-function getDefinitionListValue(label) {
-  for (const dt of document.querySelectorAll("dt")) {
-    if (dt.textContent?.trim() !== label) continue;
-    const dd = dt.nextElementSibling;
-    if (dd?.tagName === "DD") return dd.textContent?.trim() ?? null;
-  }
-  return null;
-}
-
-/**
- * @typedef {{ title: string | null, imageUrl: string | null, description: string | null, length: string | null }} PageMeta
- */
-
-/**
- * @param {string} url
- * @param {PageMeta} meta
- */
-function reportChannelVisit(url, meta) {
-  ipcRenderer.send("arenaChannelVisited", { url, ...meta });
-}
-
-/**
- * Second path segments (are.na/<user>/<segment>) that look like a channel URL but
- * are actually one of are.na's own special pages, e.g. are.na/justin-liang/blocks is
- * "all my blocks", not a channel named "blocks".
- */
-const NON_CHANNEL_SLUGS = new Set([
-  "channels",
-  "blocks",
-  "index",
-  "table",
-  "all",
-  "following",
-  "followers",
-  "groups",
-]);
-
-/**
- * @param {string} href
- * @returns {boolean}
- */
-function isNonChannelUrl(href) {
-  /** @type {URL} */
-  let parsed;
-  try {
-    parsed = new URL(href);
-  } catch {
-    return false;
-  }
-  const segments = parsed.pathname.split("/").filter(Boolean);
-  return segments.length === 2 && NON_CHANNEL_SLUGS.has(segments[1]);
-}
-
-/** @returns {PageMeta} */
-function currentOgMeta() {
-  return {
-    title: getOgMeta("og:title"),
-    imageUrl: getOgMeta("og:image"),
-    description: getOgMeta("og:description"),
-    length: getDefinitionListValue("Length"),
-  };
-}
-
-// are.na sets each page's og:url/og:title/og:image/og:description via next/head, but
-// on client-side SPA transitions the URL can update (location.href, pushState) before
-// the <head> tags catch up, and the tags themselves can land in separate mutations
-// (e.g. og:url flips to the new page before og:title/og:image do) - so checking
-// og:url === href at the instant a single mutation/navigation fires isn't enough; it
-// can catch a half-updated <head> still showing the previous channel's title/image.
-// Instead, wait for things to go quiet (no new mutation/navigation for a bit) before
-// checking - by then a real transition has almost certainly finished landing all its
-// tags together, so og:url matching href is actually trustworthy.
-const REPORT_SETTLE_DELAY_MS = 300;
-
-/** @type {ReturnType<typeof setTimeout> | null} */
-let reportSettleTimer = null;
-
-function maybeReportChannelVisit() {
-  const href = location.href;
-  if (isNonChannelUrl(href)) return;
-
-  if (reportSettleTimer) clearTimeout(reportSettleTimer);
-  reportSettleTimer = setTimeout(() => {
-    reportSettleTimer = null;
-    if (location.href !== href) return; // navigated elsewhere before settling
-    if (getOgMeta("og:url") !== href) return;
-
-    reportChannelVisit(href, currentOgMeta());
-  }, REPORT_SETTLE_DELAY_MS);
-}
-
-function observeChannelMeta() {
-  maybeReportChannelVisit();
-
-  const headObserver = new MutationObserver(maybeReportChannelVisit);
-  headObserver.observe(document.head, {
-    childList: true,
-    subtree: true,
-    attributes: true,
-  });
-
-  // <head> mutations alone miss the stale-tag SPA transition described above (nothing
-  // in <head> actually changes), so also recheck on every history navigation.
-  const originalPushState = history.pushState.bind(history);
-  const originalReplaceState = history.replaceState.bind(history);
-  history.pushState = function (...args) {
-    const result = originalPushState(...args);
-    maybeReportChannelVisit();
-    return result;
-  };
-  history.replaceState = function (...args) {
-    const result = originalReplaceState(...args);
-    maybeReportChannelVisit();
-    return result;
-  };
-  window.addEventListener("popstate", maybeReportChannelVisit);
-}
-
 /** @type {boolean | null} */
 let lastReportedDialogOpen = null;
 
@@ -246,7 +111,6 @@ function updateDialogOpenState() {
 
   if (hasDialog !== lastReportedDialogOpen) {
     lastReportedDialogOpen = hasDialog;
-    ipcRenderer.send("dialogOpenStateChanged", hasDialog);
   }
 }
 
@@ -257,15 +121,9 @@ function observeDialogState() {
 }
 
 function init() {
-  console.log("init");
   injectCSS();
   injectNavButtons();
   observeDialogState();
-  observeChannelMeta();
 }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", init);
-} else {
-  // init();
-}
+document.addEventListener("DOMContentLoaded", init);
