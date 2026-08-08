@@ -3,7 +3,7 @@
   "productName": "are.na",
   "version": "1.0.0",
   "description": "are.na desktop application",
-  "main": "src/electron/index.js",
+  "main": "src/index.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
