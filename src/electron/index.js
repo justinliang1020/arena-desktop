@@ -1,6 +1,7 @@
 const { app, BrowserWindow, nativeTheme } = require("electron");
 const path = require("node:path");
 const { buildApplicationMenu, showTabContextMenu } = require("./menu.cjs");
+const { initializeIpcHandlers } = require("./ipc");
 
 // NOTE: commenting this out since i'm uninstalling electron-squirrel-startup until I want to formally add windows support
 // this is since electron-squirrel-startup is currently causing type checking issues
@@ -28,6 +29,26 @@ const createWindow = async () => {
 
   mainWindow.webContents.on("context-menu", (_event, params) => {
     showTabContextMenu(mainWindow.webContents, params);
+  });
+
+  initializeIpcHandlers();
+
+  const sendNavigationState = () => {
+    const canGoBack = mainWindow.webContents.navigationHistory.canGoBack();
+    const canGoForward =
+      mainWindow.webContents.navigationHistory.canGoForward();
+    mainWindow.webContents.send("tab-navigation-state", {
+      canGoBack,
+      canGoForward,
+    });
+  };
+
+  mainWindow.webContents.addListener("did-navigate", (_event) => {
+    sendNavigationState();
+  });
+
+  mainWindow.webContents.addListener("did-navigate-in-page", (_event) => {
+    sendNavigationState();
   });
 
   buildApplicationMenu(mainWindow);
