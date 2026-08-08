@@ -18,23 +18,6 @@
     "email": "justinliang1020@gmail.com"
   },
   "license": "MIT",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "better-sqlite3",
-      "electron",
-      "electron-winstaller",
-      "fsevents"
-    ],
-    "overrides": {
-      "node-abi": "~3.90.0"
-    }
-  },
-  "dependencies": {
-    "@types/better-sqlite3": "^7.6.13",
-    "better-sqlite3": "^12.9.0",
-    "hyperapp": "^2.0.22",
-    "write-file-atomic": "^7.0.1"
-  },
   "devDependencies": {
     "@electron-forge/cli": "^7.8.1",
     "@electron-forge/maker-deb": "^7.8.1",
@@ -49,7 +32,6 @@
     "electron": "41.7.1",
     "electron-reloader": "^1.2.3",
     "globals": "^16.4.0",
-    "live-server": "^1.2.2",
     "typescript-eslint": "^8.46.0"
   }
 }
