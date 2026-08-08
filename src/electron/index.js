@@ -1,6 +1,6 @@
 const { app, BrowserWindow, nativeTheme } = require("electron");
 const path = require("node:path");
-const { buildApplicationMenu, showTabContextMenu } = require("./menu.cjs");
+const { buildApplicationMenu, showContextMenu } = require("./menu.cjs");
 const { initializeIpcHandlers } = require("./ipc");
 
 // NOTE: commenting this out since i'm uninstalling electron-squirrel-startup until I want to formally add windows support
@@ -27,7 +27,7 @@ const createWindow = async () => {
   });
 
   mainWindow.webContents.on("context-menu", (_event, params) => {
-    showTabContextMenu(mainWindow.webContents, params);
+    showContextMenu(mainWindow.webContents, params);
   });
 
   initializeIpcHandlers();
@@ -50,7 +50,7 @@ const createWindow = async () => {
     sendNavigationState();
   });
 
-  buildApplicationMenu(mainWindow);
+  buildApplicationMenu();
 
   mainWindow.maximize();
 
