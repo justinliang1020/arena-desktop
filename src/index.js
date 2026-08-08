@@ -54,7 +54,7 @@ const createWindow = async () => {
 
   try {
     // put this in a try catch so it doesn't throw an error in production, since electron-reloader is a dev dependency
-    const reloader = require("./dev-reloader.cjs");
+    const reloader = require("electron-reloader");
     reloader(module, { ignore: ["**/local/**", "**/web/**"] });
   } catch {}
   return mainWindow;
