@@ -23,7 +23,7 @@ const createWindow = async () => {
     vibrancy: "sidebar", // macOS only
     backgroundMaterial: "acrylic", // Windows 10/11 only
     titleBarStyle: "hidden", // https://www.electronjs.org/docs/latest/tutorial/custom-title-bar#custom-traffic-lights-macos
-    trafficLightPosition: { x: 15, y: 15 }, //TODO: adjust
+    trafficLightPosition: { x: 15, y: 19 },
   });
 
   mainWindow.webContents.on("context-menu", (_event, params) => {
