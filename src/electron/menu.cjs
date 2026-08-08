@@ -1,4 +1,4 @@
-const { Menu, clipboard, shell, BrowserWindow } = require("electron");
+const { Menu, clipboard, shell, BrowserWindow, dialog } = require("electron");
 
 /**
  * @param {import('electron').WebContents} webContents
@@ -76,7 +76,10 @@ function showContextMenu(webContents, params) {
   menu.popup();
 }
 
-function buildApplicationMenu() {
+/**
+ * @param {() => void} onNewWindow
+ */
+function buildApplicationMenu(onNewWindow) {
   /** @type {import('electron').MenuItemConstructorOptions[]} */
   const template = [];
 
@@ -85,6 +88,18 @@ function buildApplicationMenu() {
   }
 
   template.push(
+    {
+      label: "File",
+      submenu: [
+        {
+          label: "New Window",
+          accelerator: "CmdOrCtrl+N",
+          click: () => onNewWindow(),
+        },
+        { type: "separator" },
+        { role: "close", label: "Close Window" },
+      ],
+    },
     { role: "editMenu" },
     {
       label: "View",

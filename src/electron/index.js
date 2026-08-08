@@ -30,8 +30,6 @@ const createWindow = async () => {
     showContextMenu(mainWindow.webContents, params);
   });
 
-  initializeIpcHandlers();
-
   const sendNavigationState = () => {
     const canGoBack = mainWindow.webContents.navigationHistory.canGoBack();
     const canGoForward =
@@ -50,9 +48,7 @@ const createWindow = async () => {
     sendNavigationState();
   });
 
-  buildApplicationMenu();
-
-  mainWindow.maximize();
+  buildApplicationMenu(() => createWindow());
 
   mainWindow.loadURL("https://are.na");
 
@@ -68,6 +64,7 @@ const createWindow = async () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(async () => {
+  initializeIpcHandlers();
   await createWindow();
 
   // On OS X it's common to re-create a window in the app when the
