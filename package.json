@@ -1,6 +1,6 @@
 {
   "name": "arena_desktop",
-  "productName": "are.na",
+  "productName": "Are.na",
   "version": "1.0.0",
   "description": "are.na desktop application",
   "main": "src/index.js",
