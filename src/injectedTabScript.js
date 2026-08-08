@@ -31,9 +31,31 @@ html.arena-dialog-open nav { app-region: no-drag !important; }
   #arena-electron-nav-buttons button:disabled { color: hsl(0 0% 20%); }
   #arena-electron-nav-buttons button:hover:not(:disabled) { color: hsl(0 0% 100%); }
 }
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: hsl(0 0% 50% / 0.4); border-radius: 4px; }
+
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+  background : transparent;
+  border-radius: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #818181;
+  border-radius: 10px;
+  width : 8px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #8F8F8F; 
+}
+
 /* are.na's top route-change loading bar; targeted structurally (first child of the Next.js root). hide this since it doesn't fully complete sometimes and becomes visually annoying */
 #__next > div:first-child { display: none !important; }
 `;
