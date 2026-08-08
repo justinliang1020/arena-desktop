@@ -34,7 +34,7 @@ function getMainProcessPaths(topModuleObject, cwd) {
   return paths;
 }
 
-module.exports = (moduleObject, options = {}, tabs) => {
+module.exports = (moduleObject, options = {}) => {
   // This module should be a dev dependency, but guard
   // this in case the user included it as a dependency.
   if (!isDev) {
@@ -96,9 +96,6 @@ module.exports = (moduleObject, options = {}, tabs) => {
         chalk.dim(`(${dateTime().split(" ")[1]})`),
       );
     }
-
-    // JUSTIN ADDED THIS TO KILL TABS. can be tested by writing to constants.js
-    tabs.removeAllTabs();
 
     if (mainProcessPaths.has(path.join(cwd, filePath))) {
       // Prevent multiple instances of Electron from being started due to the change

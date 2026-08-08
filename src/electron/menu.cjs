@@ -77,9 +77,8 @@ function showTabContextMenu(webContents, params) {
 
 /**
  * @param {import('electron').BrowserWindow} mainWindow
- * @param {import('./tabs.cjs').Tabs} tabs
  */
-function buildApplicationMenu(mainWindow, tabs) {
+function buildApplicationMenu(mainWindow) {
   /** @type {import('electron').MenuItemConstructorOptions[]} */
   const template = [];
 
@@ -129,11 +128,6 @@ function buildApplicationMenu(mainWindow, tabs) {
         },
         { type: "separator" },
         { type: "separator" },
-        {
-          label: "Toggle Sidebar Visible",
-          accelerator: "CmdOrCtrl+S",
-          click: () => tabs.setSidebarVisible(!tabs.sidebarVisible),
-        },
         { type: "separator" },
         { role: "togglefullscreen" },
         { role: "zoomIn" },

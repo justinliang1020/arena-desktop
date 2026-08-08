@@ -1,17 +1,5 @@
-const {
-  app,
-  BrowserWindow,
-  ipcMain,
-  nativeTheme,
-  Menu,
-  MenuItem,
-} = require("electron");
+const { app, BrowserWindow, nativeTheme } = require("electron");
 const path = require("node:path");
-const fs = require("fs").promises;
-const { initializeIpcHandlers, TRAFFIC_LIGHT_POSITION } = require("./ipc.cjs");
-const { Tabs } = require("./tabs.cjs");
-const { setMainWindow } = require("./db.cjs");
-const { Overlay } = require("./overlay.cjs");
 const { buildApplicationMenu, showTabContextMenu } = require("./menu.cjs");
 
 // NOTE: commenting this out since i'm uninstalling electron-squirrel-startup until I want to formally add windows support
@@ -35,25 +23,14 @@ const createWindow = async () => {
     vibrancy: "sidebar", // macOS only
     backgroundMaterial: "acrylic", // Windows 10/11 only
     titleBarStyle: "hidden", // https://www.electronjs.org/docs/latest/tutorial/custom-title-bar#custom-traffic-lights-macos
-    trafficLightPosition: TRAFFIC_LIGHT_POSITION,
+    trafficLightPosition: { x: 15, y: 15 }, //TODO: adjust
   });
 
   mainWindow.webContents.on("context-menu", (_event, params) => {
     showTabContextMenu(mainWindow.webContents, params);
   });
 
-  setMainWindow(mainWindow);
-  const tabs = new Tabs(mainWindow);
-  mainWindow.on("focus", () => {
-    const activeTab = tabs.getActiveTab();
-    if (activeTab && !activeTab.webContents.isDestroyed()) {
-      activeTab.webContents.focus();
-    }
-  });
-  const overlay = new Overlay(mainWindow);
-  tabs.on("tab-created", () => overlay.bringToFront());
-  initializeIpcHandlers(mainWindow, tabs, overlay);
-  buildApplicationMenu(mainWindow, tabs);
+  buildApplicationMenu(mainWindow);
 
   mainWindow.maximize();
 
@@ -68,7 +45,7 @@ const createWindow = async () => {
   try {
     // put this in a try catch so it doesn't throw an error in production, since electron-reloader is a dev dependency
     const reloader = require("./dev-reloader.cjs");
-    reloader(module, { ignore: ["**/local/**", "**/web/**"] }, tabs);
+    reloader(module, { ignore: ["**/local/**", "**/web/**"] });
   } catch {}
   return mainWindow;
 };
@@ -113,7 +90,3 @@ app.on("window-all-closed", () => {
   //   app.quit();
   // }
 });
-
-const arg = process.argv[2];
-const cwd = process.cwd();
-const userPath = app.getPath("userData");
