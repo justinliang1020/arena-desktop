@@ -1,4 +1,4 @@
-const { Menu, clipboard } = require("electron");
+const { Menu, clipboard, shell, BrowserWindow } = require("electron");
 
 /**
  * @param {import('electron').WebContents} webContents
@@ -16,6 +16,16 @@ function showContextMenu(webContents, params) {
   if (params.linkURL) {
     menuItems.push(
       {
+        label: "Open Link in New Window",
+        click: () => {
+          new BrowserWindow().loadURL(params.linkURL);
+        },
+      },
+      {
+        label: "Open Link in Default Browser",
+        click: () => shell.openExternal(params.linkURL),
+      },
+      {
         label: "Copy Link Address",
         click: () => clipboard.writeText(params.linkURL),
       },
@@ -27,9 +37,7 @@ function showContextMenu(webContents, params) {
     menuItems.push(
       {
         label: "Save Image As...",
-        click: () => {
-          /* download logic */
-        },
+        click: () => webContents.downloadURL(params.srcURL),
       },
       {
         label: "Copy Image",
