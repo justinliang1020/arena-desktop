@@ -11,7 +11,6 @@ const { initializeIpcHandlers } = require("./ipc");
 // }
 
 const createWindow = async () => {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
@@ -57,12 +56,6 @@ const createWindow = async () => {
 
   mainWindow.loadURL("https://are.na");
 
-  // and load the index.html of the app.
-  // mainWindow.loadFile(path.join(__dirname, "../core/index.electron.html"));
-
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools();
-
   try {
     // put this in a try catch so it doesn't throw an error in production, since electron-reloader is a dev dependency
     const reloader = require("./dev-reloader.cjs");
@@ -75,7 +68,7 @@ const createWindow = async () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(async () => {
-  const mainWindow = await createWindow();
+  await createWindow();
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
@@ -83,22 +76,6 @@ app.whenReady().then(async () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       await createWindow();
     }
-  });
-
-  // Send initial theme state to renderer
-  mainWindow.webContents.once("did-finish-load", () => {
-    mainWindow.webContents.send(
-      "theme-changed",
-      nativeTheme.shouldUseDarkColors,
-    );
-  });
-
-  // Listen for system theme changes
-  nativeTheme.on("updated", () => {
-    mainWindow.webContents.send(
-      "theme-changed",
-      nativeTheme.shouldUseDarkColors,
-    );
   });
 });
 
