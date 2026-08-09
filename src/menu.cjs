@@ -124,18 +124,18 @@ function buildApplicationMenu(webContents, onNewWindow) {
       label: "History",
       submenu: [
         {
+          id: "history-back",
           label: "Back",
           accelerator: "CmdOrCtrl+[",
+          enabled: webContents.navigationHistory.canGoBack(),
           click: () => webContents.navigationHistory.goBack(),
-          //BUG: fix this, doesn't work because it is always disabled since it just calls it initially and doesn't re-evaluate
-          // enabled: webContents.navigationHistory.canGoBack(),
         },
         {
+          id: "history-forward",
           label: "Forward",
           accelerator: "CmdOrCtrl+]",
+          enabled: webContents.navigationHistory.canGoForward(),
           click: () => webContents.navigationHistory.goForward(),
-          //BUG: fix this, doesn't work because it is always disabled since it just calls it initially and doesn't re-evaluate
-          // enabled: webContents.navigationHistory.canGoForward(),
         },
       ],
     },
@@ -143,6 +143,18 @@ function buildApplicationMenu(webContents, onNewWindow) {
 
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
+
+  // menu item `enabled` is only evaluated once at build time, so re-apply it
+  // on the actual MenuItem instances whenever navigation state changes.
+  const updateHistoryMenuState = () => {
+    const backItem = menu.getMenuItemById("history-back");
+    const forwardItem = menu.getMenuItemById("history-forward");
+    if (backItem) backItem.enabled = webContents.navigationHistory.canGoBack();
+    if (forwardItem)
+      forwardItem.enabled = webContents.navigationHistory.canGoForward();
+  };
+  webContents.on("did-navigate", updateHistoryMenuState);
+  webContents.on("did-navigate-in-page", updateHistoryMenuState);
 }
 
 module.exports = {
