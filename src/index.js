@@ -10,10 +10,11 @@ const { initializeIpcHandlers } = require("./ipc");
 //   app.quit();
 // }
 
-const createWindow = async () => {
+/**
+ * @param {string} [url] - url to create new window with. if undefined, open are.na home page
+ */
+const createWindow = async (url) => {
   const mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
     minWidth: 640,
     minHeight: 300,
     webPreferences: {
@@ -27,7 +28,7 @@ const createWindow = async () => {
   });
 
   mainWindow.webContents.on("context-menu", (_event, params) => {
-    showContextMenu(mainWindow.webContents, params);
+    showContextMenu(mainWindow.webContents, params, (url) => createWindow(url));
   });
 
   const sendNavigationState = () => {
@@ -50,7 +51,7 @@ const createWindow = async () => {
 
   buildApplicationMenu(() => createWindow());
 
-  mainWindow.loadURL("https://are.na");
+  mainWindow.loadURL(url ?? "https://are.na");
 
   try {
     // put this in a try catch so it doesn't throw an error in production, since electron-reloader is a dev dependency

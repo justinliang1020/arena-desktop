@@ -3,8 +3,9 @@ const { Menu, clipboard, shell, BrowserWindow, dialog } = require("electron");
 /**
  * @param {import('electron').WebContents} webContents
  * @param {Electron.ContextMenuParams} params
+ * @param {(url: string) => void} onNewWindow
  */
-function showContextMenu(webContents, params) {
+function showContextMenu(webContents, params, onNewWindow) {
   /** @type{Array<(Electron.MenuItemConstructorOptions) | (Electron.MenuItem)>}*/
   const menuItems = [];
 
@@ -18,7 +19,7 @@ function showContextMenu(webContents, params) {
       {
         label: "Open Link in New Window",
         click: () => {
-          new BrowserWindow().loadURL(params.linkURL);
+          onNewWindow(params.linkURL);
         },
       },
       {
