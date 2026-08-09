@@ -2,6 +2,16 @@
 
 const { ipcRenderer } = require("electron");
 
+const backwardsIconSvg = `<svg width="11" height="19" viewBox="0 0 11 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M9.91421 17.7071L1.41421 9.20711L9.91421 0.707108" stroke="currentColor" stroke-width="2"/>
+</svg>`;
+const forwardsIconSvg = `<svg width="11" height="19" viewBox="0 0 11 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0.707108 17.7071L9.20711 9.20711L0.707108 0.707108" stroke="currentColor" stroke-width="2"/>
+</svg>`;
+const reloadIconSvg = `<svg width="17" height="19" viewBox="0 0 17 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M16 9.78802C15.6333 13.8478 12.4232 17.0221 8.51745 17.0221C4.36568 17.0221 1 13.4354 1 9.01103C1 4.58666 4.36568 1 8.51745 1C11.3555 1 14.4663 2.67597 15.7458 5.14983M11.2511 5.08589L15.7458 5.14983V0.0220642" stroke="currentColor" stroke-width="2"/>
+</svg>`;
+
 const injectedStyle = `
 nav { app-region: drag; position: relative; border-bottom: 1px solid; border-color: hsl(0 0 90% / 0.5); background-color: hsl(0 0 100% / 0.5) !important; backdrop-filter: blur(4px); }
 nav * { app-region: no-drag; }
@@ -12,7 +22,7 @@ html.arena-dialog-open nav { app-region: no-drag !important; }
 [role="dialog"] { margin-top: 30px; }
 #arena-electron-nav-buttons {
   position: fixed;
-  top: 7px;
+  top: 13px;
   left: 80px;
   display: flex;
   gap: 4px;
@@ -67,14 +77,14 @@ function injectCSS() {
 }
 
 /**
- * @param {string} label
+ * @param {string} iconSvg
  * @param {() => void} onClick
  */
-function createNavButton(label, onClick) {
+function createNavButton(iconSvg, onClick) {
   const button = document.createElement("button");
-  button.textContent = label;
+  button.innerHTML = iconSvg;
   button.style.cssText =
-    "border: none; background: transparent; min-width: 36px; font-size: 1.7em;";
+    "border: none; background: transparent; min-width: 36px; height: 28px; display: flex; align-items: center; justify-content: center;";
   button.addEventListener("click", (event) => {
     event.stopPropagation();
     onClick();
@@ -103,16 +113,16 @@ function injectNavButtons() {
   // deduplicate
   if (document.querySelector("#arena-electron-nav-buttons")) return;
 
-  backButtonEl = createNavButton("←", () =>
+  backButtonEl = createNavButton(backwardsIconSvg, () =>
     ipcRenderer.invoke("tabGoBackSelf"),
   );
-  forwardButtonEl = createNavButton("→", () =>
+  forwardButtonEl = createNavButton(forwardsIconSvg, () =>
     ipcRenderer.invoke("tabGoForwardSelf"),
   );
   backButtonEl.disabled = true;
   forwardButtonEl.disabled = true;
 
-  const reloadButtonEl = createNavButton("⟳", () =>
+  const reloadButtonEl = createNavButton(reloadIconSvg, () =>
     ipcRenderer.invoke("tabReloadSelf"),
   );
 
