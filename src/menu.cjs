@@ -110,6 +110,7 @@ function buildApplicationMenu(webContents, onNewWindow) {
     {
       label: "View",
       submenu: [
+        { role: "reload" },
         { role: "forceReload" },
         { role: "toggleDevTools" },
         { type: "separator" },
