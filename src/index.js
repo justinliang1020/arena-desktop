@@ -22,8 +22,7 @@ const createWindow = async (openMaximized, url) => {
       scrollBounce: true, // macOS only: native elastic/rubber-band overscroll
       preload: path.join(__dirname, "injectedTabScript.js"),
     },
-    vibrancy: "sidebar", // macOS only
-    backgroundMaterial: "acrylic", // Windows 10/11 only
+    backgroundColor: nativeTheme.shouldUseDarkColors ? "black" : "white",
     titleBarStyle: "hidden", // https://www.electronjs.org/docs/latest/tutorial/custom-title-bar#custom-traffic-lights-macos
     trafficLightPosition: { x: 15, y: 20 },
   });
