@@ -49,7 +49,7 @@ const createWindow = async (url) => {
     sendNavigationState();
   });
 
-  buildApplicationMenu(() => createWindow());
+  buildApplicationMenu(mainWindow.webContents, () => createWindow());
 
   mainWindow.loadURL(url ?? "https://are.na");
 

@@ -82,9 +82,10 @@ function showContextMenu(webContents, params, onNewWindow) {
 }
 
 /**
+ * @param {import('electron').WebContents} webContents
  * @param {() => void} onNewWindow
  */
-function buildApplicationMenu(onNewWindow) {
+function buildApplicationMenu(webContents, onNewWindow) {
   /** @type {import('electron').MenuItemConstructorOptions[]} */
   const template = [];
 
@@ -119,6 +120,25 @@ function buildApplicationMenu(onNewWindow) {
       ],
     },
     { role: "windowMenu" },
+    {
+      label: "History",
+      submenu: [
+        {
+          label: "Back",
+          accelerator: "CmdOrCtrl+[",
+          click: () => webContents.navigationHistory.goBack(),
+          //BUG: fix this, doesn't work because it is always disabled since it just calls it initially and doesn't re-evaluate
+          // enabled: webContents.navigationHistory.canGoBack(),
+        },
+        {
+          label: "Forward",
+          accelerator: "CmdOrCtrl+]",
+          click: () => webContents.navigationHistory.goForward(),
+          //BUG: fix this, doesn't work because it is always disabled since it just calls it initially and doesn't re-evaluate
+          // enabled: webContents.navigationHistory.canGoForward(),
+        },
+      ],
+    },
   );
 
   const menu = Menu.buildFromTemplate(template);
