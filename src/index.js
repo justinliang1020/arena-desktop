@@ -11,9 +11,10 @@ const { initializeIpcHandlers } = require("./ipc");
 // }
 
 /**
+ * @param {boolean} openMaximized
  * @param {string} [url] - url to create new window with. if undefined, open are.na home page
  */
-const createWindow = async (url) => {
+const createWindow = async (openMaximized, url) => {
   const mainWindow = new BrowserWindow({
     minWidth: 640,
     minHeight: 300,
@@ -27,8 +28,14 @@ const createWindow = async (url) => {
     trafficLightPosition: { x: 15, y: 19 },
   });
 
+  if (openMaximized) {
+    mainWindow.maximize();
+  }
+
   mainWindow.webContents.on("context-menu", (_event, params) => {
-    showContextMenu(mainWindow.webContents, params, (url) => createWindow(url));
+    showContextMenu(mainWindow.webContents, params, (url) =>
+      createWindow(false, url),
+    );
   });
 
   const sendNavigationState = () => {
@@ -49,7 +56,7 @@ const createWindow = async (url) => {
     sendNavigationState();
   });
 
-  buildApplicationMenu(mainWindow.webContents, () => createWindow());
+  buildApplicationMenu(mainWindow.webContents, () => createWindow(false));
 
   mainWindow.loadURL(url ?? "https://are.na");
 
@@ -66,13 +73,13 @@ const createWindow = async (url) => {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(async () => {
   initializeIpcHandlers();
-  await createWindow();
+  await createWindow(true);
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   app.on("activate", async () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      await createWindow();
+      await createWindow(true);
     }
   });
 });
