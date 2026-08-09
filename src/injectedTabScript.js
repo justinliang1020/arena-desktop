@@ -22,7 +22,7 @@ html.arena-dialog-open nav { app-region: no-drag !important; }
 [role="dialog"] { margin-top: 30px; }
 #arena-electron-nav-buttons {
   position: fixed;
-  top: 13px;
+  top: 14px;
   left: 80px;
   display: flex;
   gap: 4px;
