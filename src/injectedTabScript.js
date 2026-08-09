@@ -152,7 +152,14 @@ function observeDialogState() {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
+let initialized = false;
+
 function init() {
+  // for some reason i don't know, electron causes the "init" function to be triggered twice on page load.
+  // DOMContentLoaded happens twice?? i don't know why.
+  // to prevent this, add a manual check to only initialize once
+  if (initialized) return;
+  initialized = true;
   injectCSS();
   injectNavButtons();
   observeDialogState();
