@@ -1,4 +1,4 @@
-const { app, BrowserWindow, nativeTheme } = require("electron");
+const { app, BrowserWindow, nativeTheme, shell } = require("electron");
 const path = require("node:path");
 const { buildApplicationMenu, showContextMenu } = require("./menu.cjs");
 const { initializeIpcHandlers } = require("./ipc");
@@ -9,6 +9,18 @@ const { initializeIpcHandlers } = require("./ipc");
 // if (require("electron-squirrel-startup")) {
 //   app.quit();
 // }
+
+/**
+ * @param {string} url
+ */
+function isArenaUrl(url) {
+  try {
+    const { hostname } = new URL(url);
+    return hostname === "are.na" || hostname.endsWith(".are.na");
+  } catch {
+    return false;
+  }
+}
 
 /**
  * @param {boolean} openMaximized
@@ -30,6 +42,16 @@ const createWindow = async (openMaximized, url) => {
   if (openMaximized) {
     mainWindow.maximize();
   }
+
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (isArenaUrl(url)) {
+      createWindow(false, url);
+    } else {
+      const w = new BrowserWindow();
+      w.loadURL(url);
+    }
+    return { action: "deny" };
+  });
 
   mainWindow.webContents.on("context-menu", (_event, params) => {
     showContextMenu(mainWindow.webContents, params, (url) =>
