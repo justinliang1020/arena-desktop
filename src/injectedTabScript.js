@@ -15,7 +15,8 @@ const reloadIconSvg = `<svg width="17" height="19" viewBox="0 0 17 19" fill="non
 const injectedStyle = `
 nav { app-region: drag; position: relative; border-bottom: 1px solid; border-color: hsl(0 0 90% / 0.5); background-color: hsl(0 0 100% / 0.5) !important; backdrop-filter: blur(4px); }
 nav * { app-region: no-drag; }
-nav > *:nth-child(1) { position: absolute; left: 50%; transform: translateX(-50%); min-width: 265px; }
+/* center the are.na logo + search bar */
+nav > *:nth-child(1) { position: absolute; left: 50%; transform: translateX(-50%); min-width: 270px; }
 nav > *:nth-child(2) { position: absolute; right: 0; }
 html.arena-dialog-open nav { app-region: no-drag !important; }
 /* to allow space for nav buttons and traffic lights, add extra top margin for dialogs */
