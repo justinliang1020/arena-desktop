@@ -2,6 +2,7 @@ const { app, BrowserWindow, nativeTheme, shell } = require("electron");
 const path = require("node:path");
 const { buildApplicationMenu, showContextMenu } = require("./menu.cjs");
 const { initializeIpcHandlers } = require("./ipc");
+const { isArenaUrl } = require("./utils.cjs");
 
 // NOTE: commenting this out since i'm uninstalling electron-squirrel-startup until I want to formally add windows support
 // this is since electron-squirrel-startup is currently causing type checking issues
@@ -9,18 +10,6 @@ const { initializeIpcHandlers } = require("./ipc");
 // if (require("electron-squirrel-startup")) {
 //   app.quit();
 // }
-
-/**
- * @param {string} url
- */
-function isArenaUrl(url) {
-  try {
-    const { hostname } = new URL(url);
-    return hostname === "are.na" || hostname.endsWith(".are.na");
-  } catch {
-    return false;
-  }
-}
 
 /**
  * @param {boolean} openMaximized

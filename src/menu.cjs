@@ -1,3 +1,4 @@
+const { isArenaUrl } = require("./utils.cjs");
 const { Menu, clipboard, shell, BrowserWindow, dialog } = require("electron");
 
 /**
@@ -19,7 +20,12 @@ function showContextMenu(webContents, params, onNewWindow) {
       {
         label: "Open Link in New Window",
         click: () => {
-          onNewWindow(params.linkURL);
+          if (isArenaUrl(params.linkURL)) {
+            onNewWindow(params.linkURL);
+          } else {
+            const w = new BrowserWindow();
+            w.loadURL(params.linkURL);
+          }
         },
       },
       {
