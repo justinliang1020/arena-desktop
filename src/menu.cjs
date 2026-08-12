@@ -72,10 +72,16 @@ function showContextMenu(webContents, params, onNewWindow) {
       click: () => webContents.navigationHistory.goForward(),
     },
     { label: "Reload", click: () => webContents.reload() },
-    {
-      label: "Copy Page Link Address",
+  );
+
+  if (!params.linkURL) {
+    menuItems.push({
+      label: "Copy URL",
       click: () => clipboard.writeText(params.pageURL),
-    },
+    });
+  }
+
+  menuItems.push(
     { type: "separator" },
     {
       label: "Inspect Element",
