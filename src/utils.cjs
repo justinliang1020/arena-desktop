@@ -1,3 +1,5 @@
+const { BrowserWindow, nativeTheme } = require("electron");
+
 /**
  * @param {string} url
  */
@@ -10,6 +12,17 @@ function isArenaUrl(url) {
   }
 }
 
+/**
+ * @param {string} url
+ */
+function createNonArenaWindow(url) {
+  const w = new BrowserWindow({
+    backgroundColor: nativeTheme.shouldUseDarkColors ? "black" : "white",
+  });
+  w.loadURL(url);
+}
+
 module.exports = {
   isArenaUrl,
+  createNonArenaWindow,
 };

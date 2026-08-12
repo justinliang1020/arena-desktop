@@ -2,7 +2,7 @@ const { app, BrowserWindow, nativeTheme, shell } = require("electron");
 const path = require("node:path");
 const { buildApplicationMenu, showContextMenu } = require("./menu.cjs");
 const { initializeIpcHandlers } = require("./ipc");
-const { isArenaUrl } = require("./utils.cjs");
+const { isArenaUrl, createNonArenaWindow } = require("./utils.cjs");
 
 // NOTE: commenting this out since i'm uninstalling electron-squirrel-startup until I want to formally add windows support
 // this is since electron-squirrel-startup is currently causing type checking issues
@@ -15,7 +15,7 @@ const { isArenaUrl } = require("./utils.cjs");
  * @param {boolean} openMaximized
  * @param {string} [url] - url to create new window with. if undefined, open are.na home page
  */
-const createWindow = async (openMaximized, url) => {
+const createArenaWindow = async (openMaximized, url) => {
   const mainWindow = new BrowserWindow({
     minWidth: 640,
     minHeight: 300,
@@ -34,17 +34,16 @@ const createWindow = async (openMaximized, url) => {
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     if (isArenaUrl(url)) {
-      createWindow(false, url);
+      createArenaWindow(false, url);
     } else {
-      const w = new BrowserWindow();
-      w.loadURL(url);
+      createNonArenaWindow(url);
     }
     return { action: "deny" };
   });
 
   mainWindow.webContents.on("context-menu", (_event, params) => {
     showContextMenu(mainWindow.webContents, params, (url) =>
-      createWindow(false, url),
+      createArenaWindow(false, url),
     );
   });
 
@@ -66,7 +65,7 @@ const createWindow = async (openMaximized, url) => {
     sendNavigationState();
   });
 
-  buildApplicationMenu(mainWindow.webContents, () => createWindow(false));
+  buildApplicationMenu(mainWindow.webContents, () => createArenaWindow(false));
 
   mainWindow.loadURL(url ?? "https://are.na");
 
@@ -83,13 +82,13 @@ const createWindow = async (openMaximized, url) => {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(async () => {
   initializeIpcHandlers();
-  await createWindow(true);
+  await createArenaWindow(true);
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   app.on("activate", async () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      await createWindow(true);
+      await createArenaWindow(true);
     }
   });
 });

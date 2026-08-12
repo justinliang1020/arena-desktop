@@ -1,4 +1,4 @@
-const { isArenaUrl } = require("./utils.cjs");
+const { isArenaUrl, createNonArenaWindow } = require("./utils.cjs");
 const { Menu, clipboard, shell, BrowserWindow, dialog } = require("electron");
 
 /**
@@ -23,8 +23,7 @@ function showContextMenu(webContents, params, onNewWindow) {
           if (isArenaUrl(params.linkURL)) {
             onNewWindow(params.linkURL);
           } else {
-            const w = new BrowserWindow();
-            w.loadURL(params.linkURL);
+            createNonArenaWindow(params.linkURL);
           }
         },
       },
