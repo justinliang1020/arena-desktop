@@ -152,6 +152,36 @@ function observeDialogState() {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
+/**
+ * @param {string} url
+ */
+function isArenaUrl(url) {
+  try {
+    const { hostname } = new URL(url);
+    return hostname === "are.na" || hostname.endsWith(".are.na");
+  } catch {
+    return false;
+  }
+}
+
+// open non-are.na links in a new tab (routed to the system browser by
+// setWindowOpenHandler in index.js) instead of navigating this window away.
+// this is needed for edge cases such as links in comments
+function tagExternalLinks() {
+  for (const a of document.querySelectorAll("a[href]")) {
+    const anchor = /** @type {HTMLAnchorElement} */ (a);
+    if (!isArenaUrl(anchor.href)) {
+      anchor.target = "_blank";
+    }
+  }
+}
+
+function observeExternalLinks() {
+  tagExternalLinks();
+  const observer = new MutationObserver(tagExternalLinks);
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
 let initialized = false;
 
 function init() {
@@ -163,6 +193,7 @@ function init() {
   injectCSS();
   injectNavButtons();
   observeDialogState();
+  observeExternalLinks();
 }
 
 document.addEventListener("DOMContentLoaded", init);
