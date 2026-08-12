@@ -19,7 +19,7 @@ nav > *:nth-child(1) { position: absolute; left: 50%; transform: translateX(-50%
 nav > *:nth-child(2) { position: absolute; right: 0; }
 html.arena-dialog-open nav { app-region: no-drag !important; }
 /* to allow space for nav buttons and traffic lights, add extra top margin for dialogs */
-[role="dialog"] { margin-top: 30px; }
+[role="dialog"] { margin-top: 44px; }
 #arena-electron-nav-buttons {
   position: fixed;
   top: 14px;
