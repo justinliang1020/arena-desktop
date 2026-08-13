@@ -1,6 +1,10 @@
 const { app, BrowserWindow, nativeTheme, shell } = require("electron");
 const path = require("node:path");
-const { buildApplicationMenu, showContextMenu } = require("./menu.cjs");
+const {
+  buildApplicationMenu,
+  updateHistoryMenuState,
+  showContextMenu,
+} = require("./menu.cjs");
 const { initializeIpcHandlers } = require("./ipc");
 const { isArenaUrl, createNonArenaWindow } = require("./utils.cjs");
 
@@ -59,13 +63,13 @@ const createArenaWindow = async (openMaximized, url) => {
 
   mainWindow.webContents.addListener("did-navigate", (_event) => {
     sendNavigationState();
+    updateHistoryMenuState();
   });
 
   mainWindow.webContents.addListener("did-navigate-in-page", (_event) => {
     sendNavigationState();
+    updateHistoryMenuState();
   });
-
-  buildApplicationMenu(mainWindow.webContents, () => createArenaWindow(false));
 
   mainWindow.loadURL(url ?? "https://are.na");
 
@@ -82,6 +86,8 @@ const createArenaWindow = async (openMaximized, url) => {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(async () => {
   initializeIpcHandlers();
+  buildApplicationMenu(() => createArenaWindow(false));
+  app.on("browser-window-focus", updateHistoryMenuState);
   await createArenaWindow(true);
 
   // On OS X it's common to re-create a window in the app when the

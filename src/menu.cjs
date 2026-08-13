@@ -93,10 +93,15 @@ function showContextMenu(webContents, params, onNewWindow) {
 }
 
 /**
- * @param {import('electron').WebContents} webContents
+ * On macOS there is exactly one application menu shared by every window, so
+ * its handlers must act on whichever window is currently focused rather than
+ * a webContents captured at build time - otherwise Back/Forward silently act
+ * on (and reflect the state of) a stale, no-longer-focused window as soon as
+ * more than one window is open.
+ *
  * @param {() => void} onNewWindow
  */
-function buildApplicationMenu(webContents, onNewWindow) {
+function buildApplicationMenu(onNewWindow) {
   /** @type {import('electron').MenuItemConstructorOptions[]} */
   const template = [];
 
@@ -139,15 +144,17 @@ function buildApplicationMenu(webContents, onNewWindow) {
           id: "history-back",
           label: "Back",
           accelerator: "CmdOrCtrl+[",
-          enabled: webContents.navigationHistory.canGoBack(),
-          click: () => webContents.navigationHistory.goBack(),
+          enabled: false,
+          click: () =>
+            BrowserWindow.getFocusedWindow()?.webContents.navigationHistory.goBack(),
         },
         {
           id: "history-forward",
           label: "Forward",
           accelerator: "CmdOrCtrl+]",
-          enabled: webContents.navigationHistory.canGoForward(),
-          click: () => webContents.navigationHistory.goForward(),
+          enabled: false,
+          click: () =>
+            BrowserWindow.getFocusedWindow()?.webContents.navigationHistory.goForward(),
         },
       ],
     },
@@ -155,21 +162,31 @@ function buildApplicationMenu(webContents, onNewWindow) {
 
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
+}
 
-  // menu item `enabled` is only evaluated once at build time, so re-apply it
-  // on the actual MenuItem instances whenever navigation state changes.
-  const updateHistoryMenuState = () => {
-    const backItem = menu.getMenuItemById("history-back");
-    const forwardItem = menu.getMenuItemById("history-forward");
-    if (backItem) backItem.enabled = webContents.navigationHistory.canGoBack();
-    if (forwardItem)
-      forwardItem.enabled = webContents.navigationHistory.canGoForward();
-  };
-  webContents.on("did-navigate", updateHistoryMenuState);
-  webContents.on("did-navigate-in-page", updateHistoryMenuState);
+// menu item `enabled` is only evaluated once at build time, so re-apply it on
+// the actual MenuItem instances whenever navigation or window focus changes.
+// Always reads from the currently focused window, not the window that
+// triggered the update, so it stays correct regardless of which window's
+// event fired.
+function updateHistoryMenuState() {
+  const menu = Menu.getApplicationMenu();
+  if (!menu) return;
+
+  const backItem = menu.getMenuItemById("history-back");
+  const forwardItem = menu.getMenuItemById("history-forward");
+  const focusedWebContents = BrowserWindow.getFocusedWindow()?.webContents;
+
+  if (backItem)
+    backItem.enabled =
+      focusedWebContents?.navigationHistory.canGoBack() ?? false;
+  if (forwardItem)
+    forwardItem.enabled =
+      focusedWebContents?.navigationHistory.canGoForward() ?? false;
 }
 
 module.exports = {
   buildApplicationMenu,
+  updateHistoryMenuState,
   showContextMenu,
 };
