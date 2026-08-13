@@ -40,7 +40,12 @@ const createArenaWindow = async (openMaximized, url) => {
     if (isArenaUrl(url)) {
       createArenaWindow(false, url);
     } else {
-      createNonArenaWindow(url);
+      const w = createNonArenaWindow(url);
+      w.webContents.on("context-menu", (_event, params) => {
+        showContextMenu(w.webContents, params, (arenaUrl) =>
+          createArenaWindow(false, arenaUrl),
+        );
+      });
     }
     return { action: "deny" };
   });

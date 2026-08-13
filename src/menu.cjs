@@ -23,7 +23,10 @@ function showContextMenu(webContents, params, onNewWindow) {
           if (isArenaUrl(params.linkURL)) {
             onNewWindow(params.linkURL);
           } else {
-            createNonArenaWindow(params.linkURL);
+            const w = createNonArenaWindow(params.linkURL);
+            w.webContents.on("context-menu", (_event, newParams) => {
+              showContextMenu(w.webContents, newParams, onNewWindow);
+            });
           }
         },
       },

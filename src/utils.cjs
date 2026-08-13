@@ -22,6 +22,7 @@ function createNonArenaWindow(url) {
     backgroundColor: nativeTheme.shouldUseDarkColors ? "black" : "white",
   });
   w.loadURL(url);
+  return w;
 }
 
 module.exports = {
