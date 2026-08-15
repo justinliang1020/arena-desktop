@@ -2,6 +2,11 @@
 
 const { ipcRenderer } = require("electron");
 
+// this preload script also runs inside every iframe on the page, not just the
+// top-level document - guard the entry points below so nothing ever touches
+// an iframe's body.
+const isTopFrame = window.top === window.self;
+
 const backwardsIconSvg = `<svg width="11" height="19" viewBox="0 0 11 19" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M9.91421 17.7071L1.41421 9.20711L9.91421 0.707108" stroke="currentColor" stroke-width="2"/>
 </svg>`;
@@ -105,7 +110,11 @@ function applyNavState(state) {
   if (forwardButtonEl) forwardButtonEl.disabled = !state.canGoForward;
 }
 
-ipcRenderer.on("tab-navigation-state", (_event, state) => applyNavState(state));
+if (isTopFrame) {
+  ipcRenderer.on("tab-navigation-state", (_event, state) =>
+    applyNavState(state),
+  );
+}
 
 // Always floats on top of the page (not injected into nav or a dialog), so
 // it stays put regardless of what the SPA renders/replaces underneath it.
@@ -196,4 +205,6 @@ function init() {
   observeExternalLinks();
 }
 
-document.addEventListener("DOMContentLoaded", init);
+if (isTopFrame) {
+  document.addEventListener("DOMContentLoaded", init);
+}
