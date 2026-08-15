@@ -13,7 +13,7 @@ const reloadIconSvg = `<svg width="17" height="19" viewBox="0 0 17 19" fill="non
 </svg>`;
 
 const injectedStyle = `
-nav { app-region: drag; position: relative; border-bottom: 1px solid; border-color: hsl(0 0 90% / 0.5); background-color: hsl(0 0 100% / 0.5) !important; backdrop-filter: blur(4px); }
+nav { app-region: drag; position: relative; border-bottom: 1px solid; border-color: var(--colors-gray1); background-color: color-mix(in srgb, var(--colors-background, white) 50%, transparent) !important; backdrop-filter: blur(4px); }
 nav * { app-region: no-drag; }
 /* center the are.na logo + search bar */
 nav > *:nth-child(1) { position: absolute; left: 50%; transform: translateX(-50%); min-width: 270px; }
@@ -37,7 +37,6 @@ html.arena-dialog-open nav { app-region: no-drag !important; }
 #arena-electron-nav-buttons button:disabled { color: hsl(0 0% 85%); }
 #arena-electron-nav-buttons button:hover:not(:disabled) { color: hsl(0 0 0%); }
 @media (prefers-color-scheme: dark) {
-  nav { border-color: hsl(0 0 20% / 0.5); background-color: hsl(0 0 0% / 0.5) !important; }
   #arena-electron-nav-buttons button:not(:disabled) { color: hsl(0 0% 70%); }
   #arena-electron-nav-buttons button:disabled { color: hsl(0 0% 20%); }
   #arena-electron-nav-buttons button:hover:not(:disabled) { color: hsl(0 0% 100%); }
