@@ -21,7 +21,15 @@ const injectedStyle = `
 nav { app-region: drag; position: relative; border-bottom: 1px solid; border-color: var(--colors-gray1); background-color: color-mix(in srgb, var(--colors-background, white) 50%, transparent) !important; backdrop-filter: blur(4px); }
 nav * { app-region: no-drag; }
 /* center the are.na logo + search bar */
-nav > *:nth-child(1) { position: absolute; left: 50%; transform: translateX(-50%); min-width: 270px; }
+nav > *:nth-child(1) {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 210px;
+  *:nth-child(2) {
+     max-width: 100%
+  }
+}
 nav > *:nth-child(2) { position: absolute; right: 0; }
 html.arena-dialog-open nav { app-region: no-drag !important; }
 /* to allow space for nav buttons and traffic lights, add extra top margin for dialogs */
