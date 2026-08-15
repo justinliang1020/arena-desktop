@@ -78,13 +78,14 @@ const createArenaWindow = async (openMaximized, url) => {
 
   mainWindow.loadURL(url ?? "https://are.na");
 
-  try {
-    // put this in a try catch so it doesn't throw an error in production, since electron-reloader is a dev dependency
-    const reloader = require("electron-reloader");
-    reloader(module, { ignore: ["**/local/**", "**/web/**"] });
-  } catch {}
   return mainWindow;
 };
+
+try {
+  // put this in a try catch so it doesn't throw an error in production, since electron-reloader is a dev dependency
+  const reloader = require("electron-reloader");
+  reloader(module, { ignore: ["**/local/**", "**/web/**"] });
+} catch {}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
