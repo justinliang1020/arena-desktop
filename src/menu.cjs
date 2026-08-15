@@ -1,5 +1,4 @@
-const { isArenaUrl, createNonArenaWindow } = require("./utils.cjs");
-const { Menu, clipboard, shell, BrowserWindow, dialog } = require("electron");
+const { Menu, clipboard, shell, BrowserWindow } = require("electron");
 
 /**
  * @param {import('electron').WebContents} webContents
@@ -20,14 +19,7 @@ function showContextMenu(webContents, params, onNewWindow) {
       {
         label: "Open Link in New Window",
         click: () => {
-          if (isArenaUrl(params.linkURL)) {
             onNewWindow(params.linkURL);
-          } else {
-            const w = createNonArenaWindow(params.linkURL);
-            w.webContents.on("context-menu", (_event, newParams) => {
-              showContextMenu(w.webContents, newParams, onNewWindow);
-            });
-          }
         },
       },
       {
