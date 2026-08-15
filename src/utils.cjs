@@ -28,7 +28,7 @@ const createWindow = async (openMaximized, url) => {
     minHeight: 300,
     webPreferences: {
       scrollBounce: true, // macOS only: native elastic/rubber-band overscroll
-      preload: isArena ? path.join(__dirname, "injectedTabScript.js") : "",
+      preload: isArena ? path.join(__dirname, "injectedArenaScript.js") : "",
     },
     backgroundColor: nativeTheme.shouldUseDarkColors ? "black" : "white",
     titleBarStyle: isArena ? "hidden" : undefined, // https://www.electronjs.org/docs/latest/tutorial/custom-title-bar#custom-traffic-lights-macos
