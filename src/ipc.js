@@ -1,4 +1,4 @@
-const { ipcMain } = require("electron");
+const { ipcMain, BrowserWindow } = require("electron");
 
 function initializeIpcHandlers() {
   /** @type {Record<string, (event: Electron.IpcMainInvokeEvent) => Promise<any>>} */
@@ -16,6 +16,10 @@ function initializeIpcHandlers() {
     tabReloadSelf: async (event) => {
       event.sender.reload();
     },
+    tabGetFullScreenStateSelf: async (event) => ({
+      isFullScreen:
+        BrowserWindow.fromWebContents(event.sender)?.isFullScreen() ?? false,
+    }),
   };
 
   for (const [channel, handler] of Object.entries(handlers)) {

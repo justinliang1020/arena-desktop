@@ -35,7 +35,10 @@ html.arena-dialog-open nav { app-region: no-drag !important; }
   z-index: 2147483647;
   app-region: no-drag;
   pointer-events: auto;
+  transition: left 0.1s ease 
 }
+/* no traffic lights to clear space for when the window is full screen */
+html.arena-fullscreen #arena-electron-nav-buttons { left: 10px; }
 #arena-electron-nav-buttons button { cursor: pointer; }
 #arena-electron-nav-buttons button:disabled { cursor: default; }
 #arena-electron-nav-buttons button:not(:disabled) { color: hsl(0 0% 41%); }
@@ -110,9 +113,19 @@ function applyNavState(state) {
   if (forwardButtonEl) forwardButtonEl.disabled = !state.canGoForward;
 }
 
+/**
+ * @param {{ isFullScreen: boolean }} state
+ */
+function applyFullScreenState(state) {
+  document.documentElement.classList.toggle("arena-fullscreen", state.isFullScreen);
+}
+
 if (isTopFrame) {
   ipcRenderer.on("tab-navigation-state", (_event, state) =>
     applyNavState(state),
+  );
+  ipcRenderer.on("window-fullscreen-state", (_event, isFullScreen) =>
+    applyFullScreenState({ isFullScreen }),
   );
 }
 
@@ -141,6 +154,7 @@ function injectNavButtons() {
   document.body.append(group);
 
   ipcRenderer.invoke("tabGetNavigationStateSelf").then(applyNavState);
+  ipcRenderer.invoke("tabGetFullScreenStateSelf").then(applyFullScreenState);
 }
 
 /** @type {boolean | null} */

@@ -70,6 +70,14 @@ const createWindow = async (openMaximized, url) => {
     updateHistoryMenuState();
   });
 
+  mainWindow.on("enter-full-screen", () => {
+    mainWindow.webContents.send("window-fullscreen-state", true);
+  });
+
+  mainWindow.on("leave-full-screen", () => {
+    mainWindow.webContents.send("window-fullscreen-state", false);
+  });
+
   mainWindow.loadURL(url ?? "https://are.na");
 
   return mainWindow;
