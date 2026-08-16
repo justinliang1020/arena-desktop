@@ -43,3 +43,5 @@ GITHUB_TOKEN=***
 ```sh
 pnpm run publish
 ```
+
+New releases are automatically updated using `update-electron-app`
