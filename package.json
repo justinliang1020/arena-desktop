@@ -26,6 +26,7 @@
     "@electron-forge/maker-zip": "^7.8.1",
     "@electron-forge/plugin-auto-unpack-natives": "^7.8.1",
     "@electron-forge/plugin-fuses": "^7.8.1",
+    "@electron-forge/publisher-github": "^7.11.2",
     "@electron/fuses": "^1.8.0",
     "@eslint/js": "^9.37.0",
     "@types/write-file-atomic": "^4.0.3",
@@ -33,5 +34,12 @@
     "electron-reloader": "^1.2.3",
     "globals": "^16.4.0",
     "typescript-eslint": "^8.46.0"
+  },
+  "dependencies": {
+    "update-electron-app": "^3.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/justinliang1020/arena-desktop"
   }
 }
