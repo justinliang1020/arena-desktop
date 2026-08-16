@@ -1,0 +1,119 @@
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  nativeTheme,
+  Menu,
+  MenuItem,
+} = require("electron");
+const path = require("node:path");
+const fs = require("fs").promises;
+const { initializeIpcHandlers, TRAFFIC_LIGHT_POSITION } = require("./ipc.cjs");
+const { Tabs } = require("./tabs.cjs");
+const { setMainWindow } = require("./db.cjs");
+const { Overlay } = require("./overlay.cjs");
+const { buildApplicationMenu, showTabContextMenu } = require("./menu.cjs");
+
+// NOTE: commenting this out since i'm uninstalling electron-squirrel-startup until I want to formally add windows support
+// this is since electron-squirrel-startup is currently causing type checking issues
+// Handle creating/removing shortcuts on Windows when installing/uninstalling.
+// if (require("electron-squirrel-startup")) {
+//   app.quit();
+// }
+
+const createWindow = async () => {
+  // Create the browser window.
+  const mainWindow = new BrowserWindow({
+    width: 1200,
+    height: 800,
+    minWidth: 840,
+    minHeight: 300,
+    webPreferences: {
+      scrollBounce: true, // macOS only: native elastic/rubber-band overscroll
+      preload: path.join(__dirname, "injectedTabScript.js"),
+    },
+    vibrancy: "sidebar", // macOS only
+    backgroundMaterial: "acrylic", // Windows 10/11 only
+    titleBarStyle: "hidden", // https://www.electronjs.org/docs/latest/tutorial/custom-title-bar#custom-traffic-lights-macos
+    trafficLightPosition: TRAFFIC_LIGHT_POSITION,
+  });
+
+  mainWindow.webContents.on("context-menu", (_event, params) => {
+    showTabContextMenu(mainWindow.webContents, params);
+  });
+
+  setMainWindow(mainWindow);
+  const tabs = new Tabs(mainWindow);
+  mainWindow.on("focus", () => {
+    const activeTab = tabs.getActiveTab();
+    if (activeTab && !activeTab.webContents.isDestroyed()) {
+      activeTab.webContents.focus();
+    }
+  });
+  const overlay = new Overlay(mainWindow);
+  tabs.on("tab-created", () => overlay.bringToFront());
+  initializeIpcHandlers(mainWindow, tabs, overlay);
+  buildApplicationMenu(mainWindow, tabs);
+
+  mainWindow.maximize();
+
+  mainWindow.loadURL("https://are.na");
+
+  // and load the index.html of the app.
+  // mainWindow.loadFile(path.join(__dirname, "../core/index.electron.html"));
+
+  // Open the DevTools.
+  // mainWindow.webContents.openDevTools();
+
+  try {
+    // put this in a try catch so it doesn't throw an error in production, since electron-reloader is a dev dependency
+    const reloader = require("./dev-reloader.cjs");
+    reloader(module, { ignore: ["**/local/**", "**/web/**"] }, tabs);
+  } catch {}
+  return mainWindow;
+};
+
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.whenReady().then(async () => {
+  const mainWindow = await createWindow();
+
+  // On OS X it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  app.on("activate", async () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      await createWindow();
+    }
+  });
+
+  // Send initial theme state to renderer
+  mainWindow.webContents.once("did-finish-load", () => {
+    mainWindow.webContents.send(
+      "theme-changed",
+      nativeTheme.shouldUseDarkColors,
+    );
+  });
+
+  // Listen for system theme changes
+  nativeTheme.on("updated", () => {
+    mainWindow.webContents.send(
+      "theme-changed",
+      nativeTheme.shouldUseDarkColors,
+    );
+  });
+});
+
+// Quit when all windows are closed, except on macOS. There, it's common
+// for applications and their menu bar to stay active until the user quits
+// explicitly with Cmd + Q.
+app.on("window-all-closed", () => {
+  app.quit();
+  // if (process.platform !== "darwin") {
+  //   app.quit();
+  // }
+});
+
+const arg = process.argv[2];
+const cwd = process.cwd();
+const userPath = app.getPath("userData");

@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "checkJs": true,
+    "allowJs": true,
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ESNext",
+    "strict": true,
+    "noUnusedLocals": false,
+    "baseUrl": "."
+  },
+  "include": ["./**/*.js", "./**/*.ts", "./**/*.d.ts", "./**/*.cjs"],
+  "exclude": ["**/node_modules"]
+}
