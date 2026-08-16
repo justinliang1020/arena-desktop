@@ -1,7 +1,25 @@
-# violet
+# arena-desktop
 
-spatial canvas web browser
+Unofficial desktop application for [are.na](https://www.are.na).
 
-WIP, pre-alpha state
+## Description
 
-see https://www.are.na/justin-liang/justin-browser
+This application is a lightweight wrapper over the existing are.na website.
+
+## Installation
+
+**TODO**
+
+## Developers Guide
+
+1. Install Dependencies
+
+```sh
+pnpm install
+```
+
+2. Run Application
+
+```
+pnpm start
+```
