@@ -32,6 +32,15 @@ body {
   align-items: center;
   text-align: center;
   padding: 60px 20px 0;
+
+  h1 {
+    margin: 8px 0 24px;
+    font-size: 48px;
+  }
+
+  p {
+    max-width: 430px;
+  }
 }
 
 .unofficial {
@@ -39,11 +48,6 @@ body {
   font-weight: bold;
   font-size: 32px;
   color: #595959;
-}
-
-.hero h1 {
-  margin: 8px 0 24px;
-  font-size: 48px;
 }
 
 .download-button {
