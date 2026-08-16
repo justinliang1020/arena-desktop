@@ -125,7 +125,10 @@ function applyNavState(state) {
  * @param {{ isFullScreen: boolean }} state
  */
 function applyFullScreenState(state) {
-  document.documentElement.classList.toggle("arena-fullscreen", state.isFullScreen);
+  document.documentElement.classList.toggle(
+    "arena-fullscreen",
+    state.isFullScreen,
+  );
 }
 
 if (isTopFrame) {
@@ -221,6 +224,7 @@ function init() {
   // to prevent this, add a manual check to only initialize once
   if (initialized) return;
   initialized = true;
+  console.log("Welcome to the are.na desktop app!");
   injectCSS();
   injectNavButtons();
   observeDialogState();
