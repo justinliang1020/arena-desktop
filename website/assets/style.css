@@ -46,13 +46,6 @@ body {
   font-size: 48px;
 }
 
-.tagline {
-  margin: 0 0 32px;
-  font-size: 20px;
-  color: #595959;
-  line-height: 1.4;
-}
-
 .download-button {
   display: inline-flex;
   align-items: center;
@@ -64,6 +57,11 @@ body {
   text-decoration: none;
   color: #000;
   font-size: 20px;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: hsl(0 0 95%);
+  }
 }
 
 .download-button img {
@@ -75,13 +73,13 @@ body {
   width: 100%;
   max-width: 900px;
   height: auto;
-  margin-top: 48px;
+  margin-top: 24px;
   border-radius: 8px;
 }
 
 .description {
   max-width: 760px;
-  margin: 64px auto;
+  margin: 48px auto;
   padding: 0 20px;
   font-size: 20px;
   line-height: 1.5;
@@ -99,4 +97,9 @@ body {
   .unofficial {
     font-size: 24px;
   }
+}
+
+.disclaimer {
+  font-size: 18px;
+  color: hsl(0 0 30%);
 }
