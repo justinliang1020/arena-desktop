@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Are.na Desktop App</title>
     <link rel="stylesheet" href="assets/style.css" />
+    <script src="assets/script.js" defer></script>
   </head>
   <body>
     <header class="topbar">
@@ -37,11 +38,24 @@
           <span>Download for macOS</span>
         </a>
 
-        <img
-          class="screenshot"
-          src="assets/images/screenshot.png"
-          alt="Are.na Desktop app screenshot"
-        />
+        <div class="video-preview">
+          <video
+            src="assets/images/screen-recording.mp4"
+            autoplay
+            loop
+            muted
+            playsinline
+          ></video>
+          <span class="video-preview__icon" aria-hidden="true">
+            <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"></path>
+            </svg>
+            <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="5" width="4" height="14"></rect>
+              <rect x="14" y="5" width="4" height="14"></rect>
+            </svg>
+          </span>
+        </div>
       </section>
 
       <section class="description">

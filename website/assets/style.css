@@ -69,12 +69,65 @@ body {
   object-fit: contain;
 }
 
-.screenshot {
+.video-preview {
+  position: relative;
   width: 100%;
   max-width: 900px;
-  height: auto;
+  aspect-ratio: 1800 / 1126;
   margin-top: 24px;
   border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  line-height: 0;
+
+  video {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    display: block;
+    object-fit: cover;
+  }
+
+  &:hover .video-preview__icon {
+    opacity: 1;
+  }
+
+  &.is-playing .video-preview__icon {
+    .icon-play {
+      display: none;
+    }
+
+    .icon-pause {
+      display: block;
+    }
+  }
+}
+
+.video-preview__icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+
+  svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .icon-pause {
+    display: none;
+  }
 }
 
 .description {
