@@ -1,4 +1,7 @@
 const { FusesPlugin } = require("@electron-forge/plugin-fuses");
+const {
+  default: PublisherGithub,
+} = require("@electron-forge/publisher-github");
 const { FuseV1Options, FuseVersion } = require("@electron/fuses");
 
 module.exports = {
@@ -45,5 +48,18 @@ module.exports = {
       [FuseV1Options.EnableEmbeddedAsarIntegrityValidation]: true,
       [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
+  ],
+  publishers: [
+    {
+      name: "@electron-forge/publisher-github",
+      platforms: ["darwin"],
+      config: {
+        repository: {
+          owner: "justinliang1020",
+          name: "arena-desktop",
+        },
+        prerelease: true,
+      },
+    },
   ],
 };

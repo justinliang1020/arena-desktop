@@ -1,10 +1,8 @@
 const { app, BrowserWindow } = require("electron");
-const {
-  buildApplicationMenu,
-  updateHistoryMenuState,
-} = require("./menu.cjs");
+const { buildApplicationMenu, updateHistoryMenuState } = require("./menu.cjs");
 const { initializeIpcHandlers } = require("./ipc");
-const {  createWindow } = require("./utils.cjs");
+const { createWindow } = require("./utils.cjs");
+const { updateElectronApp } = require("update-electron-app");
 
 // NOTE: commenting this out since i'm uninstalling electron-squirrel-startup until I want to formally add windows support
 // this is since electron-squirrel-startup is currently causing type checking issues
@@ -46,3 +44,7 @@ app.on("window-all-closed", () => {
   //   app.quit();
   // }
 });
+
+// > By default your repository URL is found in your app's package.json file.
+// https://github.com/electron/update-electron-app
+updateElectronApp();
