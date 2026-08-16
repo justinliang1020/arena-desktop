@@ -5,11 +5,10 @@ module.exports = {
   packagerConfig: {
     asar: true,
     icon: "./icon/arena",
-    // TODO: uncomment this block when packaging for real production macos app
-    // osxSign: {},
-    // osxNotarize: {
-    //   keychainProfile: "justin-developer-profile",
-    // },
+    osxSign: {},
+    osxNotarize: {
+      keychainProfile: "justin-developer-profile",
+    },
   },
   rebuildConfig: {},
   makers: [
