@@ -58,7 +58,6 @@ module.exports = {
           owner: "justinliang1020",
           name: "arena-desktop",
         },
-        prerelease: true,
       },
     },
   ],
