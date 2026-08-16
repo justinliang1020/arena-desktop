@@ -1,0 +1,101 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #000;
+  background: #fff;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+}
+
+.author {
+  font-size: 20px;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 60px 20px 0;
+}
+
+.unofficial {
+  margin: 0;
+  font-weight: bold;
+  font-size: 32px;
+  color: #595959;
+}
+
+.hero h1 {
+  margin: 8px 0 24px;
+  font-size: 48px;
+}
+
+.tagline {
+  margin: 0 0 32px;
+  font-size: 20px;
+  color: #595959;
+  line-height: 1.4;
+}
+
+.download-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 24px 10px 12px;
+  background: #fff;
+  border: 1px solid #3a3a3a;
+  border-radius: 13px;
+  text-decoration: none;
+  color: #000;
+  font-size: 20px;
+}
+
+.download-button img {
+  width: 30px;
+  object-fit: contain;
+}
+
+.screenshot {
+  width: 100%;
+  max-width: 900px;
+  height: auto;
+  margin-top: 48px;
+  border-radius: 8px;
+}
+
+.description {
+  max-width: 760px;
+  margin: 64px auto;
+  padding: 0 20px;
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+.description p + p {
+  margin-top: 20px;
+}
+
+@media (max-width: 600px) {
+  .hero h1 {
+    font-size: 32px;
+  }
+
+  .unofficial {
+    font-size: 24px;
+  }
+}
