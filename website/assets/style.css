@@ -1,20 +1,20 @@
 :root {
-  --bg: #fff;
-  --fg: #000;
-  --fg-muted: #595959;
+  --bg: hsl(0 0% 100%);
+  --fg: hsl(0 0% 0%);
+  --fg-muted: hsl(0 0% 35%);
   --fg-disclaimer: hsl(0 0% 30%);
-  --icon-color: #000;
-  --video-shadow: rgba(0, 0, 0, 0.4);
+  --icon-color: hsl(0 0% 0%);
+  --video-shadow: hsl(0 0% 0% / 0.4);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #111;
-    --fg: #f2f2f2;
-    --fg-muted: #a3a3a3;
+    --bg: hsl(0 0% 7%);
+    --fg: hsl(0 0% 95%);
+    --fg-muted: hsl(0 0% 64%);
     --fg-disclaimer: hsl(0 0% 65%);
-    --icon-color: #fff;
-    --video-shadow: rgba(255, 255, 255, 0.15);
+    --icon-color: hsl(0 0% 100%);
+    --video-shadow: hsl(0 0% 100% / 0.15);
   }
 }
 
@@ -101,16 +101,16 @@ a {
   align-items: center;
   gap: 10px;
   padding: 10px 24px 10px 12px;
-  background: #fff;
-  border: 1px solid #3a3a3a;
+  background: hsl(0 0% 100%);
+  border: 1px solid hsl(0 0% 23%);
   border-radius: 13px;
   text-decoration: none;
-  color: #000;
+  color: hsl(0 0% 0%);
   font-size: 20px;
   transition: background 0.15s ease;
 
   &:hover {
-    background: hsl(0 0 95%);
+    background: hsl(0 0% 95%);
   }
 
   img {
@@ -149,8 +149,8 @@ a {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.3);
-    color: #fff;
+    background: hsl(0 0% 0% / 0.3);
+    color: hsl(0 0% 100%);
     opacity: 0;
     transition: opacity 0.15s ease;
     pointer-events: none;
