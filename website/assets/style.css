@@ -29,6 +29,16 @@ body {
   background: var(--bg);
 }
 
+a {
+  color: inherit;
+  text-decoration-color: var(--fg-muted);
+  text-underline-offset: 2px;
+
+  &:hover {
+    text-decoration-color: currentColor;
+  }
+}
+
 .topbar {
   display: flex;
   align-items: center;
