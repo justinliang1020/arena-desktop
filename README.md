@@ -8,7 +8,13 @@ This application is a lightweight wrapper over the existing are.na website.
 
 ## User Installation
 
-**TODO**
+### macOS
+
+Download the macOS latest release [here](https://github.com/justinliang1020/arena-desktop/releases).
+
+### Windows, Linux, etc.
+
+Not available yet. If you want this, leave a github issue or reach out to me.
 
 ## Developers Guide
 
