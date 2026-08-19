@@ -40,6 +40,8 @@ pnpm start
 pnpm package
 ```
 
+Note: packaging requires Node <= 22 for now. On Node 24.16+ electron-forge 7.8.1 exits silently at "Finalizing package" without producing `out/` ([electron/forge#3645](https://github.com/electron/forge/issues/3645)).
+
 ## Publishing
 
 1. Add GITHUB_TOKEN to `.env`. Scopes should have `content: write` for this repo.
