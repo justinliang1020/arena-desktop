@@ -8,20 +8,26 @@ module.exports = {
   packagerConfig: {
     asar: true,
     icon: "./icon/arena",
-    osxSign: {},
-    osxNotarize: {
-      keychainProfile: "justin-developer-profile",
-    },
+    ...(process.platform === "darwin"
+      ? {
+          osxSign: {},
+          osxNotarize: {
+            keychainProfile: "justin-developer-profile",
+          },
+        }
+      : {}),
   },
   rebuildConfig: {},
   makers: [
     {
       name: "@electron-forge/maker-squirrel",
-      config: {},
+      config: {
+        setupIcon: "./icon/arena.ico",
+      },
     },
     {
       name: "@electron-forge/maker-zip",
-      platforms: ["darwin"],
+      platforms: ["darwin", "win32"],
     },
     {
       name: "@electron-forge/maker-deb",
@@ -52,7 +58,7 @@ module.exports = {
   publishers: [
     {
       name: "@electron-forge/publisher-github",
-      platforms: ["darwin"],
+      platforms: ["darwin", "win32"],
       config: {
         repository: {
           owner: "justinliang1020",

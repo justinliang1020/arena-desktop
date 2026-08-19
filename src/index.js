@@ -4,12 +4,10 @@ const { initializeIpcHandlers } = require("./ipc");
 const { createWindow } = require("./utils.cjs");
 const { updateElectronApp } = require("update-electron-app");
 
-// NOTE: commenting this out since i'm uninstalling electron-squirrel-startup until I want to formally add windows support
-// this is since electron-squirrel-startup is currently causing type checking issues
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
-// if (require("electron-squirrel-startup")) {
-//   app.quit();
-// }
+if (require("electron-squirrel-startup")) {
+  app.quit();
+}
 
 try {
   // put this in a try catch so it doesn't throw an error in production, since electron-reloader is a dev dependency

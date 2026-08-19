@@ -36,6 +36,7 @@
     "typescript-eslint": "^8.46.0"
   },
   "dependencies": {
+    "electron-squirrel-startup": "^1.0.1",
     "update-electron-app": "^3.3.0"
   },
   "repository": {

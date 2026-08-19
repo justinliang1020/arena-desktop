@@ -8,7 +8,14 @@
     "target": "ESNext",
     "strict": true,
     "noUnusedLocals": false,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      // electron-squirrel-startup ships no types and its own JS trips
+      // checkJs (implicit-any params, and its "debug" dependency does the
+      // same). Redirect resolution to our local ambient declaration instead
+      // of letting tsc open and check the package's real implementation.
+      "electron-squirrel-startup": ["./types/electron-squirrel-startup.d.ts"]
+    }
   },
   "include": ["./**/*.js", "./**/*.ts", "./**/*.d.ts", "./**/*.cjs"],
   "exclude": ["**/node_modules"]

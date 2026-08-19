@@ -12,7 +12,11 @@ This application is a lightweight wrapper over the existing are.na website.
 
 Download the macOS latest release [here](https://github.com/justinliang1020/arena-desktop/releases).
 
-### Windows, Linux, etc.
+### Windows
+
+Download the Windows Setup `.exe` from the same [releases page](https://github.com/justinliang1020/arena-desktop/releases).
+
+### Linux, etc.
 
 Not available yet. If you want this, leave a github issue or reach out to me.
 
@@ -35,6 +39,8 @@ pnpm start
 ```sh
 pnpm package
 ```
+
+Note: packaging requires Node <= 22 for now. On Node 24.16+ electron-forge 7.8.1 exits silently at "Finalizing package" without producing `out/` ([electron/forge#3645](https://github.com/electron/forge/issues/3645)).
 
 ## Publishing
 
