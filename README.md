@@ -12,7 +12,11 @@ This application is a lightweight wrapper over the existing are.na website.
 
 Download the macOS latest release [here](https://github.com/justinliang1020/arena-desktop/releases).
 
-### Windows, Linux, etc.
+### Windows
+
+Download the Windows Setup `.exe` from the same [releases page](https://github.com/justinliang1020/arena-desktop/releases).
+
+### Linux, etc.
 
 Not available yet. If you want this, leave a github issue or reach out to me.
 
