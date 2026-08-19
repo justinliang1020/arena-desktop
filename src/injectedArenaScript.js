@@ -86,9 +86,24 @@ html.arena-fullscreen #arena-electron-nav-buttons { left: 10px; }
 #__next > div:first-child { display: none !important; }
 `;
 
+// Windows has no traffic lights, so the nav buttons don't need to clear
+// space for them on the left. Instead, native caption buttons render
+// top-right via a Window Controls Overlay (see titleBarOverlay in
+// utils.cjs), so pull the nav bar's right-side element in from under them
+// using the WCO CSS env vars. When no overlay is present (e.g. fullscreen)
+// these env vars fall back to 0px/100vw, which reproduces `right: 0` from
+// the shared style above.
+const win32OnlyStyle = `
+#arena-electron-nav-buttons { left: 10px; }
+nav > *:nth-child(2) {
+  right: calc(100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100vw));
+}
+`;
+
 function injectCSS() {
   const style = document.createElement("style");
-  style.textContent = injectedStyle;
+  style.textContent =
+    injectedStyle + (process.platform === "win32" ? win32OnlyStyle : "");
   document.head.appendChild(style);
 }
 
