@@ -23,6 +23,27 @@ function isArenaUrl(url) {
  */
 const createWindow = async (openMaximized, url) => {
   const isArena = isArenaUrl(url);
+  const isDark = nativeTheme.shouldUseDarkColors;
+
+  // are.na windows hide the native title bar to make room for the injected
+  // nav buttons. On macOS this pairs with custom traffic-light positioning;
+  // on Windows the caption buttons instead render as a Window Controls
+  // Overlay so minimize/maximize/close still work. Linux gets a normal
+  // title bar for now.
+  /** @type {Electron.BrowserWindowConstructorOptions} */
+  const chromeOptions = {};
+  if (isArena && process.platform === "darwin") {
+    chromeOptions.titleBarStyle = "hidden"; // https://www.electronjs.org/docs/latest/tutorial/custom-title-bar#custom-traffic-lights-macos
+    chromeOptions.trafficLightPosition = { x: 15, y: 20 };
+  } else if (isArena && process.platform === "win32") {
+    chromeOptions.titleBarStyle = "hidden";
+    chromeOptions.titleBarOverlay = {
+      color: isDark ? "#000000" : "#ffffff",
+      symbolColor: isDark ? "#ffffff" : "#000000",
+      height: 40,
+    };
+  }
+
   const mainWindow = new BrowserWindow({
     minWidth: 640,
     minHeight: 300,
@@ -30,9 +51,14 @@ const createWindow = async (openMaximized, url) => {
       scrollBounce: true, // macOS only: native elastic/rubber-band overscroll
       preload: isArena ? path.join(__dirname, "injectedArenaScript.js") : "",
     },
-    backgroundColor: nativeTheme.shouldUseDarkColors ? "black" : "white",
-    titleBarStyle: isArena ? "hidden" : undefined, // https://www.electronjs.org/docs/latest/tutorial/custom-title-bar#custom-traffic-lights-macos
-    trafficLightPosition: isArena ? { x: 15, y: 20 } : undefined,
+    backgroundColor: isDark ? "black" : "white",
+    // in dev, Electron otherwise shows its own default icon in the Windows
+    // taskbar / Linux window list instead of are.na's. On macOS the dock
+    // icon always comes from the packaged app bundle, so this is skipped there.
+    ...(process.platform !== "darwin"
+      ? { icon: path.join(__dirname, "../icon/arena.png") }
+      : {}),
+    ...chromeOptions,
   });
 
   if (openMaximized) {
