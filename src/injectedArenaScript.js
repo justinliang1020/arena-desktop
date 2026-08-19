@@ -132,9 +132,12 @@ function applyFullScreenState(state) {
 }
 
 if (isTopFrame) {
-  ipcRenderer.on("tab-navigation-state", (_event, state) =>
-    applyNavState(state),
-  );
+  ipcRenderer.on("tab-navigation-state", (_event, state) => {
+    applyNavState(state);
+    // fires on both did-navigate and did-navigate-in-page, so this is also
+    // how we catch SPA navigations (e.g. logout) that never re-run init()
+    maybeAutoOpenLogin();
+  });
   ipcRenderer.on("window-fullscreen-state", (_event, isFullScreen) =>
     applyFullScreenState({ isFullScreen }),
   );
@@ -216,6 +219,126 @@ function observeExternalLinks() {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
+// how long to wait for the Next.js landing header to hydrate before giving up
+const AUTO_LOGIN_WAIT_MS = 5000;
+
+/**
+ * Finds a landing-nav trigger by its exact trimmed text (e.g. "Log in",
+ * "Sign up"). Scoped to `nav` and excludes anything inside the login
+ * dialog, since the dialog has its own "Not a member? Sign up" link that
+ * must stay untouched. Logged-in users never render these, so callers
+ * treat "not found" as normal.
+ * @param {string} text
+ * @returns {HTMLElement | null}
+ */
+function findNavTrigger(text) {
+  const nav = document.querySelector("nav");
+  if (!nav) return null;
+  for (const el of nav.querySelectorAll("a, button")) {
+    if (el.closest('div[role="dialog"]')) continue;
+    if (el.textContent && el.textContent.trim() === text) {
+      return /** @type {HTMLElement} */ (el);
+    }
+  }
+  return null;
+}
+
+// Hides the logged-out landing's top-nav "Sign up" button; we want the only
+// signup entry point to be the link inside the login dialog itself. Called
+// on every mutation (see observeSignUpButton) so it keeps re-hiding across
+// the SPA's re-renders of the nav.
+function hideSignUpButton() {
+  if (location.pathname !== "/") return;
+  const trigger = findNavTrigger("Sign up");
+  if (trigger) trigger.style.display = "none";
+}
+
+function observeSignUpButton() {
+  hideSignUpButton();
+  const observer = new MutationObserver(hideSignUpButton);
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
+/**
+ * @param {HTMLElement} trigger
+ */
+function clickLogInTrigger(trigger) {
+  autoLoginTriggeredForCurrentLanding = true;
+  trigger.click();
+
+  // give the dialog a moment to mount, then verify and log either way
+  setTimeout(() => {
+    const opened = !!document.querySelector('div[role="dialog"]');
+    console.log(
+      opened
+        ? "[arena-electron] auto-login: login dialog opened"
+        : "[arena-electron] auto-login: clicked 'Log in' but no dialog appeared",
+    );
+  }, 500);
+}
+
+// whether we've already auto-clicked "Log in" for the landing the user is
+// currently on; reset whenever we observe a navigation away from "/", so
+// coming back to the landing (e.g. right after logout) auto-opens again,
+// but closing the dialog and staying put does not reopen it
+let autoLoginTriggeredForCurrentLanding = false;
+/** @type {MutationObserver | null} */
+let autoLoginObserver = null;
+/** @type {ReturnType<typeof setTimeout> | null} */
+let autoLoginTimeoutId = null;
+
+function cancelPendingAutoLoginWait() {
+  if (autoLoginObserver) {
+    autoLoginObserver.disconnect();
+    autoLoginObserver = null;
+  }
+  if (autoLoginTimeoutId !== null) {
+    clearTimeout(autoLoginTimeoutId);
+    autoLoginTimeoutId = null;
+  }
+}
+
+// On the logged-out marketing landing ("/"), auto-open are.na's own login
+// dialog so launch drops straight into the login flow instead of the pitch
+// page. There's no DOMContentLoaded to hook for SPA navigations (e.g.
+// logout), so this is called both at init and on every
+// "tab-navigation-state" event instead. The landing is a Next.js SPA, so
+// the "Log in" trigger may not exist yet when this first runs; wait for it
+// with a MutationObserver, capped so we don't wait forever if the markup
+// changes or the user is actually logged in.
+function maybeAutoOpenLogin() {
+  // a previous navigation's wait is now stale regardless of outcome
+  cancelPendingAutoLoginWait();
+
+  if (location.pathname !== "/") {
+    autoLoginTriggeredForCurrentLanding = false;
+    return;
+  }
+  if (autoLoginTriggeredForCurrentLanding) return;
+
+  const existing = findNavTrigger("Log in");
+  if (existing) {
+    clickLogInTrigger(existing);
+    return;
+  }
+
+  autoLoginObserver = new MutationObserver(() => {
+    const found = findNavTrigger("Log in");
+    if (found) {
+      cancelPendingAutoLoginWait();
+      clickLogInTrigger(found);
+    }
+  });
+  autoLoginObserver.observe(document.body, { childList: true, subtree: true });
+
+  autoLoginTimeoutId = setTimeout(() => {
+    cancelPendingAutoLoginWait();
+    console.log(
+      "[arena-electron] auto-login: no 'Log in' trigger appeared within timeout, skipping",
+    );
+  }, AUTO_LOGIN_WAIT_MS);
+}
+
 let initialized = false;
 
 function init() {
@@ -229,6 +352,8 @@ function init() {
   injectNavButtons();
   observeDialogState();
   observeExternalLinks();
+  observeSignUpButton();
+  maybeAutoOpenLogin();
 }
 
 if (isTopFrame) {
